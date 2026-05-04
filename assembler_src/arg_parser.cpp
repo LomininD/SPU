@@ -102,10 +102,15 @@ char* generate_output_name(const char* input_file_name)
 {
     assert(input_file_name != NULL);
 
-    size_t ext_name_len = strlen(OUT_EXT);
-    size_t file_name_len = strlen(input_file_name) - strlen(ASM_EXT);
+    int ext_name_len = (int)strlen(OUT_EXT);
+    int file_name_len = (int)strlen(input_file_name) - (int)strlen(ASM_EXT);
 
-    printf("File name len: %lld, ext name len %lld\n", file_name_len, ext_name_len);
+    if (file_name_len < 0)
+    {
+        printf("done\n");
+        char* output_file_name = "a" OUT_EXT;
+        return output_file_name;
+    }
 
     char* output_file_name = (char*) calloc(file_name_len + ext_name_len + 1, sizeof(char));
 
@@ -174,9 +179,10 @@ err_t open_files(files_info* files, const parser_struct* verification, assembler
         printf("output file: %p\n", files->output_file);
         printf("debug mode: %d, log file: %p\n", asm_data->debug_mode, log_ptr);
         printf("listing_mode: %d, listing file: %p\n", asm_data->listing_mode, listing_ptr);
-        printf(MAKE_GREY("Note: file name may be incorrect\n"));
+        printf(MAKE_GREY("Note: file name (or file path) may be incorrect\n"));
         return error;
     }
+
 
     return ok;
 }

@@ -6,6 +6,7 @@ int main(int argc, char* argv[])
 {
     proc_info spu = {};
     proc_info* proc = &spu;
+    bool got_hlt = false;
 
     err_t parsed = parse_args(argc, argv, proc);
 
@@ -51,13 +52,18 @@ int main(int argc, char* argv[])
             END_PROCESS(debug_mode);
 
         if (current_cmd == HLT)
+        {
+            got_hlt = true;
             break;
+        }
 
         if (debug_mode == on)
             getchar();
     }
 
-    proc_dtor(proc);
+    if (!got_hlt)
+        proc_dtor(proc);
+        
     printf_log_msg(debug_mode, "main: shutting down processor\n");
     return 0;
 }
