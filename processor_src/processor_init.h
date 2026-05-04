@@ -8,7 +8,7 @@
 
 err_t parse_args(int argc, char* argv[], proc_info* proc);
 err_t parse_flags(char flag_str[], proc_info* proc);
-void launch_help(void);
+void  launch_proc_help(void);
 err_t open_file(char* file_name, proc_info* proc, bool* got_byte_code_file);
 
 err_t prepare_file(proc_info* proc, md_t debug_mode);

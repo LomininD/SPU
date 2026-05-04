@@ -11,7 +11,7 @@ void memory_dump(proc_info* proc)
     printf_log_msg(debug_mode, "====================================RAM DUMP====================================\n");
 
     printf_log_bold(debug_mode, " RAM", NULL);
-    printf_log_msg(debug_mode, "  [%p]\n\n", proc->RAM);
+    printf_log_msg(debug_mode, "  [%p]\n", proc->RAM);
 
     for (int i = 0; i < ram_size; ++i)
     {

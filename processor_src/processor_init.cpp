@@ -62,7 +62,7 @@ err_t parse_flags(char flag_str[], proc_info* proc)
         }
         else if (flag_str[ind] == 'h')
         {
-            launch_help();
+            launch_proc_help();
             return help;
         }
         else if (flag_str[ind] == 'f')
@@ -102,7 +102,7 @@ err_t open_file(char* file_name, proc_info* proc, bool* got_byte_code_file)
 }
 
 
-void launch_help(void)
+void launch_proc_help(void)
 {
     printf(MAKE_BOLD("===PROCESSOR HELP===\n\n"));
     printf("Byte code file name is required for processor.\n\n");

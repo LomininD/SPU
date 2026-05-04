@@ -7,32 +7,18 @@
 
 // if file is updated UPDATE VERSION
 
-const int version = 15;
-const int max_byte_code_len = 10000000;
-const int width = 400; // 127
-const int height = 250; // 78
+const int    version = 15;
+const int    max_byte_code_len = 10000;
+const int    width = 400; // 127
+const int    height = 250; // 78
 const size_t ram_size = width * height;
-const int register_amount = 8;
-const int accuracy = 1000;
+const int    register_amount = 8;
+const int    accuracy = 1000;
 
 struct proc_modes_type
 {
     md_t debug_mode;
     md_t float_mode;
-};
-
-
-struct proc_info
-{
-    proc_modes_type proc_modes;
-    FILE* byte_code_file;
-    int* code;
-    size_t prg_size;
-    st_t st;
-    st_t ret_st;
-    int registers[register_amount];
-    int RAM[ram_size];
-    size_t ip;
 };
 
 enum proc_commands
@@ -67,6 +53,20 @@ enum proc_commands
     _cmd_count
 };
 
+struct proc_info
+{
+    proc_modes_type   proc_modes;
+    FILE*             byte_code_file;
+    proc_commands     current_cmd;
+    int*              code;
+    size_t            prg_size;
+    st_t              st;
+    st_t              ret_st;
+    int               registers[register_amount];
+    int               RAM[ram_size];
+    size_t            ip;
+};
+
 enum err_t
 {
     error,
@@ -85,9 +85,10 @@ enum arg_t
 
 struct cmd_struct
 {
-    char name[10];
-    proc_commands cmd_code;
-    arg_t arg_type;
+    char            name[10];
+    proc_commands   cmd_code;
+    arg_t           arg_type;
+    err_t           (*cmd_func) (proc_info*);
 };
 
 extern cmd_struct possible_cmd[];

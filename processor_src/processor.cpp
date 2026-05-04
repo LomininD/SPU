@@ -7,6 +7,8 @@
 #include "processor_init.h"
 
 
+
+
 err_t proc_ctor(proc_info* proc)
 {
     assert(proc != NULL);
@@ -25,6 +27,7 @@ err_t proc_ctor(proc_info* proc)
 
     proc->ip = 0;
     proc->prg_size = 0;
+    proc->current_cmd = UNKNOWN;
 
     err_t prepared = prepare_file(proc, debug_mode);
     if (prepared != ok)
@@ -80,69 +83,23 @@ err_t execute_cmd(proc_info* proc, proc_commands cmd)
 {
     assert(proc != NULL);
 
-    err_t executed = ok;
+    err_t executed = error;
+    bool recognized = false;
 
-    switch (cmd)
+    proc->current_cmd = cmd;
+
+    for (int i = 0; i < _cmd_count; i++)
     {
-        case PUSH:
-            executed = proc_push(proc);
+        if (cmd == possible_cmd[i].cmd_code)
+        {
+            executed = (*(possible_cmd[i].cmd_func))(proc);
+            recognized = true;
             break;
-        case PUSHREG:
-            executed = proc_pushreg(proc);
-            break;
-        case POPREG:
-            executed = proc_popreg(proc);
-            break;
-        case PUSHM:
-            executed = proc_pushm(proc);
-            break;
-        case POPM:
-            executed = proc_popm(proc);
-            break;
-        case ADD:
-        case SUB:
-        case MULT:
-        case DIV:
-            executed = proc_calc_binary(proc, cmd);
-            break;
-        case SQRT:
-            executed = proc_calc_unary(proc, cmd);
-            break;
-        case IN:
-            executed = proc_in(proc);
-            break;
-        case OUT:
-            executed = proc_out(proc);
-            break;
-        case JMP:
-            executed = proc_jmp(proc);
-            break;
-        case JB:
-        case JBE:
-        case JA:
-        case JAE:
-        case JE:
-        case JNE:
-            executed = proc_cond_jmp(proc, cmd);
-            break;
-        case DMP:
-            executed = proc_dmp(proc);
-            break;
-        case DMPM:
-            executed = proc_dmpm(proc);
-            break;
-        case CALL:
-            executed = proc_call(proc);
-            break;
-        case RET:
-            executed = proc_ret(proc);
-            break;
-        case DRAW:
-            executed = proc_draw(proc);
-            break;
-        default:
-            printf_err(proc->proc_modes.debug_mode, "[from execute_cmd] -> unknown command (cmd = %d, ip = %zu), cannot execute\n", cmd, proc->ip);
+        }
     }
+
+    if (!recognized)
+        printf_err(proc->proc_modes.debug_mode, "[from execute_cmd] -> unknown command (cmd = %d, ip = %zu), cannot execute\n", cmd, proc->ip);
 
     return executed;
 }

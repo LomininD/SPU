@@ -69,7 +69,7 @@ err_t process_code(const files_info* files, assembler_info* asm_data, debug_info
         printf_log_msg(debug_mode, "current pos in byte_code = %d\n", asm_data->pos);
         printf_log_msg(debug_mode, "assembler: got str: %s\n", asm_data->str);
 
-        int scanned = sscanf(asm_data->str, "%31s", asm_data->raw_cmd);
+        int scanned = sscanf(asm_data->str, RAW_CMD_FORMAT, asm_data->raw_cmd);
         if (scanned == -1)
         {
             printf_log_msg(debug_mode, "\n");

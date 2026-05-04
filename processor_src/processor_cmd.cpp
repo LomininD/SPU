@@ -1,6 +1,7 @@
 #include <math.h>
 #include "stack/stack_dump.h"
 #include "processor_cmd.h"
+#include "processor.h"
 
 // think about refactoring this file
 
@@ -176,11 +177,12 @@ err_t proc_pushm(proc_info* proc)
 }
 
 
-err_t proc_calc_binary(proc_info* proc, proc_commands cmd)
+err_t proc_calc_binary(proc_info* proc)
 {
     assert(proc != NULL);
 
     md_t debug_mode = proc->proc_modes.debug_mode;
+    proc_commands cmd = proc->current_cmd;
 
     const char* cmd_name = decode_cmd(cmd);
     printf_log_msg(debug_mode, "execute_cmd: began %s \n", cmd_name);
@@ -243,11 +245,12 @@ err_t proc_calc_binary(proc_info* proc, proc_commands cmd)
 }
 
 
-err_t proc_calc_unary(proc_info* proc, proc_commands cmd)
+err_t proc_calc_unary(proc_info* proc)
 {
     assert(proc != NULL);
 
     md_t debug_mode = proc->proc_modes.debug_mode;
+    proc_commands cmd = proc->current_cmd;
 
     const char* cmd_name = decode_cmd(cmd);
     printf_log_msg(debug_mode, "execute_cmd: began %s \n", cmd_name);
@@ -398,11 +401,12 @@ err_t proc_jmp(proc_info* proc)
 }
 
 
-err_t proc_cond_jmp(proc_info* proc, proc_commands cmd)
+err_t proc_cond_jmp(proc_info* proc)
 {
     assert(proc != NULL);
 
     md_t debug_mode = proc->proc_modes.debug_mode;
+    proc_commands cmd = proc->current_cmd;
 
     const char* cmd_name = decode_cmd(cmd);
 
@@ -538,6 +542,26 @@ err_t proc_draw(proc_info* proc)
     }
 
     printf_log_msg(debug_mode, "execute_cmd: done draw\n");
+
+    proc->ip += 1;
+    return ok;
+}
+
+
+err_t proc_hlt(proc_info* proc)
+{
+    assert(proc != NULL);
+
+    md_t debug_mode = proc->proc_modes.debug_mode;
+
+    printf_log_msg(debug_mode, "execute_cmd: began hlt\n");
+
+    err_t destroyed = proc_dtor(proc);
+
+    if (destroyed != ok)
+        return error;
+
+    printf_log_msg(debug_mode, "execute_cmd: done hlt\n");
 
     proc->ip += 1;
     return ok;

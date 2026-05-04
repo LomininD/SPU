@@ -58,7 +58,7 @@ err_t parse_flags(const char flag_str[], assembler_info* asm_data, parser_struct
         }
         else if (flag_str[ind] == 'h')
         {
-            launch_help();
+            launch_asm_help();
             return help;
         }
         else
@@ -102,31 +102,21 @@ char* generate_output_name(const char* input_file_name)
 {
     assert(input_file_name != NULL);
 
-    const char* out_ext = "out";
+    size_t ext_name_len = strlen(OUT_EXT);
+    size_t file_name_len = strlen(input_file_name) - strlen(ASM_EXT);
 
-    char* output_file_name = (char*) calloc(strlen(input_file_name) + 1, sizeof(char));
+    printf("File name len: %lld, ext name len %lld\n", file_name_len, ext_name_len);
 
-    int i = 0;
-    while(*(input_file_name + i) != '.')
-    {
-        *(output_file_name + i) = *(input_file_name + i);
-        i++;
-    }
+    char* output_file_name = (char*) calloc(file_name_len + ext_name_len + 1, sizeof(char));
 
-    *(output_file_name + i) = *(input_file_name + i);
-    i++;
+    snprintf(output_file_name, file_name_len + 1, "%s", input_file_name);
+    snprintf(output_file_name + file_name_len, ext_name_len + 1, "%s",  OUT_EXT);
 
-    int j = 0;
-    while(*(out_ext + j) != '\0')
-    {
-        *(output_file_name + i) = *(out_ext + j);
-        i++;
-        j++;
-    }
     return output_file_name;
 }
 
-void launch_help(void)
+
+void launch_asm_help(void)
 {
     printf(MAKE_BOLD("===ASSEMBLER HELP===\n\n"));
     printf("Input file name is required for assembler.\n\n");
